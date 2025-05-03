@@ -117,7 +117,8 @@ services:
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
       - NODE_ENV=production
-      - TZ=${TIMEZONE}
+      - GENERIC_TIMEZONE=${TIMEZONE}
+	  - WEBHOOK_URL=https://${FULL_DOMAIN}/
       # Uncomment the following line to enable basic auth
       # - N8N_BASIC_AUTH_ACTIVE=true
       # - N8N_BASIC_AUTH_USER=admin

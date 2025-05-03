@@ -70,7 +70,8 @@ services:
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
       - NODE_ENV=production
-      - TZ=${TIMEZONE}
+      - GENERIC_TIMEZONE=${TIMEZONE}
+	  - WEBHOOK_URL=https://${FULL_DOMAIN}/
     volumes:
       - ${INSTANCE_DIR}/data:/home/node/.n8n
 EOF
