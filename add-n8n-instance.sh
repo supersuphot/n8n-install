@@ -11,18 +11,54 @@ echo -e "${BLUE}=== Add Another n8n Instance ===${NC}"
 get_user_input() {
     echo -e "\n${GREEN}Please provide the following information for the new n8n instance:${NC}"
     
-    read -p "Domain name (e.g., example.com): " DOMAIN_NAME
     read -p "Subdomain for n8n (e.g., workflow2): " SUBDOMAIN
-    read -p "Email address for Let's Encrypt: " EMAIL
-
-    # Generate a list of all available timezones
-    TIMEZONES=( $(timedatectl list-timezones) )
-
-    # Display timezone options
-    echo "Available timezones:" 
-    for i in "${!TIMEZONES[@]}"; do
-        echo "$((i+1)). ${TIMEZONES[$i]}"
+    read -p "Domain name (e.g., example.com): " DOMAIN_NAME
+    
+    # Email validation loop
+    while true; do
+        read -p "Email address for Let's Encrypt: " EMAIL
+        
+        # Check email format using regex
+        if [[ ! "$EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+            echo -e "${BLUE}Invalid email format. Please enter a valid email address.${NC}"
+            continue
+        fi
+        break
     done
+
+    # Generate a list of all available timezones grouped by region
+    REGIONS=( $(timedatectl list-timezones | cut -d'/' -f1 | sort -u) )
+
+    # Display region options in a compact format
+    echo "Available regions:"
+    for i in "${!REGIONS[@]}"; do
+        printf "%3d. %-20s" "$((i+1))" "${REGIONS[$i]}"
+        if (( (i+1) % 4 == 0 )); then
+            echo ""
+        fi
+    done
+    echo ""
+
+    # Prompt user to select a region
+    read -p "Select a region by number (default: 1): " REGION_SELECTION
+    if [[ -z "${REGION_SELECTION}" || ! "${REGION_SELECTION}" =~ ^[0-9]+$ || ${REGION_SELECTION} -lt 1 || ${REGION_SELECTION} -gt ${#REGIONS[@]} ]]; then
+        REGION="${REGIONS[0]}"
+    else
+        REGION="${REGIONS[$((REGION_SELECTION-1))]}"
+    fi
+
+    # Generate a list of timezones for the selected region
+    TIMEZONES=( $(timedatectl list-timezones | grep "^${REGION}/") )
+
+    # Display timezone options in a compact format
+    echo "Available timezones in ${REGION}:"
+    for i in "${!TIMEZONES[@]}"; do
+        printf "%3d. %-20s" "$((i+1))" "${TIMEZONES[$i]}"
+        if (( (i+1) % 4 == 0 )); then
+            echo ""
+        fi
+    done
+    echo ""
 
     # Prompt user to select a timezone
     read -p "Select a timezone by number (default: 1): " TIMEZONE_SELECTION

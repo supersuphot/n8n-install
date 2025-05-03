@@ -12,9 +12,20 @@ echo "This script will set up n8n with Docker and Caddy as a reverse proxy."
 get_user_input() {
     echo -e "\n${GREEN}Please provide the following information:${NC}"
     
-    read -p "Domain name (e.g., example.com): " DOMAIN_NAME
     read -p "Subdomain for n8n (e.g., workflow): " SUBDOMAIN
-    read -p "Email address for Let's Encrypt: " EMAIL
+    read -p "Domain name (e.g., example.com): " DOMAIN_NAME
+    
+    # Email validation loop
+    while true; do
+        read -p "Email address for Let's Encrypt: " EMAIL
+        
+        # Check email format using regex
+        if [[ ! "$EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+            echo -e "${BLUE}Invalid email format. Please enter a valid email address.${NC}"
+            continue
+        fi
+        break
+    done
 
     # Generate a list of all available timezones grouped by region
     REGIONS=( $(timedatectl list-timezones | cut -d'/' -f1 | sort -u) )
