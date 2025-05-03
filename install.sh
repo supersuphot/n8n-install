@@ -15,7 +15,23 @@ get_user_input() {
     read -p "Domain name (e.g., example.com): " DOMAIN_NAME
     read -p "Subdomain for n8n (e.g., workflow): " SUBDOMAIN
     read -p "Email address for Let's Encrypt: " EMAIL
-    read -p "Timezone (e.g., Europe/Berlin): " TIMEZONE
+
+    # Generate a list of all available timezones
+    TIMEZONES=( $(timedatectl list-timezones) )
+
+    # Display timezone options
+    echo "Available timezones:" 
+    for i in "${!TIMEZONES[@]}"; do
+        echo "$((i+1)). ${TIMEZONES[$i]}"
+    done
+
+    # Prompt user to select a timezone
+    read -p "Select a timezone by number (default: 1): " TIMEZONE_SELECTION
+    if [[ -z "${TIMEZONE_SELECTION}" || ! "${TIMEZONE_SELECTION}" =~ ^[0-9]+$ || ${TIMEZONE_SELECTION} -lt 1 || ${TIMEZONE_SELECTION} -gt ${#TIMEZONES[@]} ]]; then
+        TIMEZONE="${TIMEZONES[0]}"
+    else
+        TIMEZONE="${TIMEZONES[$((TIMEZONE_SELECTION-1))]}"
+    fi
     
     # Full domain for n8n
     FULL_DOMAIN="${SUBDOMAIN}.${DOMAIN_NAME}"
@@ -78,6 +94,9 @@ create_directories() {
     sudo mkdir -p /opt/n8n/data
     sudo mkdir -p /opt/caddy/data
     sudo mkdir -p /opt/caddy/config
+
+    # Set ownership for n8n data directory
+    sudo chown -R 1000:1000 /opt/n8n/data
 }
 
 # Create Docker Compose configuration
