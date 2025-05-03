@@ -19,11 +19,15 @@ get_user_input() {
     # Generate a list of all available timezones grouped by region
     REGIONS=( $(timedatectl list-timezones | cut -d'/' -f1 | sort -u) )
 
-    # Display region options
+    # Display region options in a compact format
     echo "Available regions:"
     for i in "${!REGIONS[@]}"; do
-        echo "$((i+1)). ${REGIONS[$i]}"
+        printf "%3d. %-20s" "$((i+1))" "${REGIONS[$i]}"
+        if (( (i+1) % 4 == 0 )); then
+            echo ""
+        fi
     done
+    echo ""
 
     # Prompt user to select a region
     read -p "Select a region by number (default: 1): " REGION_SELECTION
