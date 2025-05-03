@@ -112,10 +112,20 @@ start_instance() {
     echo -e "\n${GREEN}New n8n instance is now running at: https://${FULL_DOMAIN}${NC}"
 }
 
+# Generate a random port and ensure it is not in use
+generate_random_port() {
+    while :; do
+        RANDOM_PORT=$((RANDOM % 10000 + 10000))
+        if ! sudo netstat -tuln | grep -q ":${RANDOM_PORT}"; then
+            break
+        fi
+    done
+}
+
 # Main execution
 main() {
     get_user_input
-    RANDOM_PORT=$((RANDOM % 10000 + 10000)) # Generate a random port between 10000 and 20000
+    generate_random_port
     create_docker_compose
     update_caddy_config
     start_instance
