@@ -16,11 +16,28 @@ get_user_input() {
     read -p "Subdomain for n8n (e.g., workflow): " SUBDOMAIN
     read -p "Email address for Let's Encrypt: " EMAIL
 
-    # Generate a list of all available timezones
-    TIMEZONES=( $(timedatectl list-timezones) )
+    # Generate a list of all available timezones grouped by region
+    REGIONS=( $(timedatectl list-timezones | cut -d'/' -f1 | sort -u) )
+
+    # Display region options
+    echo "Available regions:"
+    for i in "${!REGIONS[@]}"; do
+        echo "$((i+1)). ${REGIONS[$i]}"
+    done
+
+    # Prompt user to select a region
+    read -p "Select a region by number (default: 1): " REGION_SELECTION
+    if [[ -z "${REGION_SELECTION}" || ! "${REGION_SELECTION}" =~ ^[0-9]+$ || ${REGION_SELECTION} -lt 1 || ${REGION_SELECTION} -gt ${#REGIONS[@]} ]]; then
+        REGION="${REGIONS[0]}"
+    else
+        REGION="${REGIONS[$((REGION_SELECTION-1))]}"
+    fi
+
+    # Generate a list of timezones for the selected region
+    TIMEZONES=( $(timedatectl list-timezones | grep "^${REGION}/") )
 
     # Display timezone options
-    echo "Available timezones:" 
+    echo "Available timezones in ${REGION}:"
     for i in "${!TIMEZONES[@]}"; do
         echo "$((i+1)). ${TIMEZONES[$i]}"
     done
