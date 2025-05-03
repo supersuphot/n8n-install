@@ -53,6 +53,8 @@ create_docker_compose() {
 
     INSTANCE_DIR="/opt/n8n/${SUBDOMAIN}"
     sudo mkdir -p "${INSTANCE_DIR}/data"
+    sudo chown -R 1000:1000 "${INSTANCE_DIR}/data"
+    sudo chmod -R 755 "${INSTANCE_DIR}/data"
 
     cat > "${INSTANCE_DIR}/docker-compose.yml" << EOF
 version: '3'
