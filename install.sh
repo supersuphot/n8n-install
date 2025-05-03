@@ -36,11 +36,15 @@ get_user_input() {
     # Generate a list of timezones for the selected region
     TIMEZONES=( $(timedatectl list-timezones | grep "^${REGION}/") )
 
-    # Display timezone options
+    # Display timezone options in a compact format
     echo "Available timezones in ${REGION}:"
     for i in "${!TIMEZONES[@]}"; do
-        echo "$((i+1)). ${TIMEZONES[$i]}"
+        printf "%3d. %-20s" "$((i+1))" "${TIMEZONES[$i]}"
+        if (( (i+1) % 4 == 0 )); then
+            echo ""
+        fi
     done
+    echo ""
 
     # Prompt user to select a timezone
     read -p "Select a timezone by number (default: 1): " TIMEZONE_SELECTION
