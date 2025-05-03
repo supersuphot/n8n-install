@@ -11,8 +11,25 @@ echo -e "${BLUE}=== Add Another n8n Instance ===${NC}"
 get_user_input() {
     echo -e "\n${GREEN}Please provide the following information for the new n8n instance:${NC}"
     
-    read -p "Subdomain for n8n (e.g., workflow2): " SUBDOMAIN
-    read -p "Domain name (e.g., example.com): " DOMAIN_NAME
+    # Subdomain validation loop
+    while true; do
+        read -p "Subdomain for n8n (e.g., workflow2): " SUBDOMAIN
+        if [[ -z "$SUBDOMAIN" ]]; then
+            echo -e "${BLUE}Subdomain cannot be empty. Please enter a subdomain.${NC}"
+            continue
+        fi
+        break
+    done
+    
+    # Domain validation loop
+    while true; do
+        read -p "Domain name (e.g., example.com): " DOMAIN_NAME
+        if [[ -z "$DOMAIN_NAME" ]]; then
+            echo -e "${BLUE}Domain name cannot be empty. Please enter a domain name.${NC}"
+            continue
+        fi
+        break
+    done
     
     # Email validation loop
     while true; do
