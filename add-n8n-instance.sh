@@ -77,6 +77,7 @@ services:
 EOF
 }
 
+
 # Update Caddy configuration
 update_caddy_config() {
     echo -e "\n${GREEN}Updating Caddy configuration...${NC}"
