@@ -172,6 +172,7 @@ services:
       - NODE_ENV=production
       - GENERIC_TIMEZONE=${TIMEZONE}
       - WEBHOOK_URL=https://${FULL_DOMAIN}/
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
       # Uncomment the following line to enable basic auth
       # - N8N_BASIC_AUTH_ACTIVE=true
       # - N8N_BASIC_AUTH_USER=admin

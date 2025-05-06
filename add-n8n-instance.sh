@@ -125,6 +125,7 @@ services:
       - NODE_ENV=production
       - GENERIC_TIMEZONE=${TIMEZONE}
       - WEBHOOK_URL=https://${FULL_DOMAIN}/
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
     volumes:
       - ${INSTANCE_DIR}/data:/home/node/.n8n
 EOF
